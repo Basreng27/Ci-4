@@ -9,6 +9,7 @@ class Komik_Model extends Model
     protected $table = 'komik'; //nama table di database
     protected $primaryKey = 'id'; //default nya id tapi jika di databasenya beda maka isikan seperti yang ada di database
     protected $useTimestamps = true; //untuk create_at dan update_at
+    protected $allowedFields = ['judul', 'slug', 'penulis', 'penerbit', 'sampul']; //data yang hanya bisa di isi oleh user / inputan
 
     public function GetKomik($slug = false)
     {

@@ -4,8 +4,15 @@
 <div class="container">
     <div class="row">
         <div class="col">
+            <a href="/komik/create" class="btn btn-primary mt-3">Tambah Komik</a>
             <h1><?= $title; ?></h1>
-
+            <?php if (session()->getFlashdata('pesan')) : //mengambil flash data
+            ?>
+                <div class="alert alert-success" role="alert">
+                    <!-- <?php session()->getFlashdata('pesan') ?> -->
+                    Data Berhasil Disimpan
+                </div>
+            <?php endif; ?>
             <table class="table">
                 <thead>
                     <tr>
