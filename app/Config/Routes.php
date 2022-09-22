@@ -35,7 +35,25 @@ $routes->set404Override();
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
+
+
 $routes->get('/', 'Home::index');
+$routes->get('/getdataurl/(:any)', 'Coba::GetDataURL/$1');
+//(:any) = apapun datanya
+//(:num) = number
+//(:alpha) = a - z
+//(:alphanum) = a - z dan angka
+//(:segment) = apapun kecuali symbol
+$routes->get('/getnamaa', 'Coba::GetNama');
+$routes->get('/coba', 'Coba::index'); //harus di buatkan dulu controllernya //menambahkan route baru menggunakan add
+$routes->add('/cobaadd', 'Coba::coba'); //harus di buatkan dulu controllernya //menambahkan route baru menggunakan add
+//akses menggunakan url menggunakan get
+//bekerja dengan form menggunakan post
+//delete di database menggunakkan delete
+$routes->get('/getnama', function () { //bisa langsung menggunakan function langsung di dalamnya
+    echo "Hello World";
+});
+$routes->get('/controlleradmin', 'Admin\Admin::Admin'); //memanggil function yang di dalam folder
 
 /*
  * --------------------------------------------------------------------
