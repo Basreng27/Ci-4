@@ -40,7 +40,9 @@ $routes->set404Override();
 $routes->get('/', 'Home::index');
 $routes->get('/home', 'Pages::Home');
 $routes->get('/about', 'Pages::About');
-
+$routes->get('/komik', 'Komik::index');
+//untuk mendapatkan isi dari field slug (sama seperti get id)
+$routes->get('/komik/(:segment)', 'Komik::Detail/$1'); //segment agar "/" tidak terbawa
 
 /*
  * --------------------------------------------------------------------
