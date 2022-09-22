@@ -20,8 +20,7 @@ class Pages extends BaseController
             'ig' => "raywndi_",
             'test' => ["satu", "dua", "tiga"]
         ];
-        echo view('static\header');
-        echo view('pages\about', $data);
-        echo view('static\footer');
+
+        return view('pages\about', $data); //untuk menggabungkan header dan footer menggunakan section
     }
 }
