@@ -42,8 +42,10 @@ class Komik extends BaseController
 
     public function Create()
     {
+        session(); //penambahan validation //bisa juga di simpan di basecontroller
         $data = [
-            'title' => 'Form Create'
+            'title' => 'Form Create',
+            'validation' => \Config\Services::validation()
         ];
 
         return view('pages/create_komik', $data);
@@ -51,6 +53,23 @@ class Komik extends BaseController
 
     public function Save()
     {
+        //Validasi input
+        if (!$this->validate([
+            //aturan validasi
+            'judul' => [ //bisa lebih dari 1 rule/aturan //required = harus di isi //is_unique = tidak boleh ada data sama //selengkapnya bisa di cek di module ci4 validation paling bawah
+                'rules' => 'required|is_unique[komik.judul]',
+                'errors' => [ //error tiao rule
+                    'required' => '{field} komik harus diisi',
+                    'is_unique' => '{field} sudah terdaftar'
+                ]
+            ]
+            // 'penulis' => 'required|'
+        ])) {
+            //mengambil pesan salah
+            $validation = \Config\Services::validation();
+            return redirect()->to('/komik/create')->withInput()->with('validation', $validation); //withInput() = mengirim semua data yang sebelumnya di input //with('validation', $validation) = mengirim data menggunakan redirect, validation = namanya, $validation = isinya
+            //lalu masukan ke create
+        }
         // $this->request->getVar('judul'); //untuk mengambil data 1
         // dd($this->request->getVar()); //mengambil request apapun get atau post
 
