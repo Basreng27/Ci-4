@@ -30,7 +30,16 @@
                         <td><img src="/gambar/<?= $komik['sampul'] ?>" class="sampul" alt=""></td>
                         <td><?= $komik['created_at']; ?></td>
                         <td><?= $komik['updated_at']; ?></td>
-                        <td><a href="/edit_komik" class="btn btn-info">Edit</a> || <a href="/komik" class="btn btn-danger">Back</a></td>
+                        <td><a href="/komik/edit/<?= $komik['slug']; ?>" class="btn btn-info">Edit</a>
+                            ||
+                            <!-- supaya tidak bisa di edit di url -->
+                            <form action="/komik/<?= $komik['id']; ?>" method="post" class="d-inline">
+                                <?= csrf_field(); ?>
+                                <!-- menggunakan metode menipu -->
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Yakin Ingin Menghapus? ')">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                 </tbody>
             </table>

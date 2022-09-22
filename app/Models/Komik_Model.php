@@ -19,4 +19,13 @@ class Komik_Model extends Model
 
         return $this->where(['slug' => $slug])->first();
     }
+
+    public function GetKomikId($id = false)
+    {
+        if ($id == false) { //jika $id kosong
+            return $this->findAll();
+        }
+
+        return $this->where(['id' => $id])->first();
+    }
 }

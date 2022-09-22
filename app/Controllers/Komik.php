@@ -88,4 +88,66 @@ class Komik extends BaseController
 
         return redirect()->to('/komik'); //redirect ke komik awal
     }
+
+    public function Delete($id)
+    {
+        $this->komikModel->delete($id); //menghapus data didatabase
+        session()->setFlashdata('delete', 'Data Berhasil dihapus');
+        return redirect()->to('/komik');
+    }
+
+    public function Edit($slug)
+    {
+        session(); //penambahan validation //bisa juga di simpan di basecontroller
+        $data = [
+            'title' => 'Form Edit',
+            'validation' => \Config\Services::validation(),
+            'komik' => $this->komikModel->GetKomik($slug)
+        ];
+
+        return view('pages/edit_komik', $data);
+    }
+
+    public function Update($id)
+    {
+        // $u = $komikLama['judul'];
+        // dd($komikLama);
+        $komikLama = $this->komikModel->GetKomik($this->request->getVar('slug'));
+        //cek judul
+        if ($komikLama['judul'] == $this->request->getVar('judul')) {
+            $rule_judul = 'required';
+        } else {
+            $rule_judul = 'required|is_unique[komik.judul]';
+        }
+
+        if (!$this->validate([
+            //aturan validasi
+            'judul' => [
+                'rules' => $rule_judul,
+                'errors' => [ //error tiao rule
+                    'required' => '{field} komik harus diisi',
+                    'is_unique' => '{field} sudah terdaftar'
+                ]
+            ]
+        ])) {
+            //mengambil pesan salah
+            $validation = \Config\Services::validation();
+            return redirect()->to('/komik/edit/' . $this->request->getVar('slug'))->withInput()->with('validation', $validation);
+        }
+
+        $slug = url_title($this->request->getVar('judul'), '_', true); //"url_title()" untuk membuat semua huruf kecil dan spasinya hilang
+        //untuk input/update data ke database
+        $this->komikModel->save([
+            'id' => $id,
+            'judul' => $this->request->getVar('judul'),
+            'slug' => $slug,
+            'penulis' => $this->request->getVar('penulis'),
+            'penerbit' => $this->request->getVar('penerbit'),
+            'sampul' => $this->request->getVar('sampul'),
+        ]);
+
+        session()->setFlashdata('pesan', 'Data Berhasil disimpan');
+
+        return redirect()->to('/komik');
+    }
 }

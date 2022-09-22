@@ -42,9 +42,13 @@ $routes->get('/home', 'Pages::Home');
 $routes->get('/about', 'Pages::About');
 $routes->get('/komik', 'Komik::index');
 //untuk mendapatkan isi dari field slug (sama seperti get id)
+$routes->get('/komik/edit/(:segment)', 'Komik::Edit/$1');
+$routes->post('/komik/update/(:any)', 'Komik::Update/$1'); //edit data
 $routes->get('/komik/create', 'Komik::Create');
-$routes->get('/komik/(:segment)', 'Komik::Detail/$1'); //segment agar "/" tidak terbawa
+$routes->delete('/komik/(:num)', 'Komik::Delete/$1'); //untuk delete menggunakan delete
+$routes->get('/komik/(:any)', 'Komik::Detail/$1'); //segment agar "/" tidak terbawa
 $routes->post('/komik/save', 'Komik::Save'); //menggunakan post untuk kirim data
+// $routes->delete('/komik/delete/(:any)', 'Komik::Delete/$1'); //untuk delete menggunakan delete
 
 /*
  * --------------------------------------------------------------------
