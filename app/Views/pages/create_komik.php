@@ -7,7 +7,8 @@
             <h2 class="my-3"><?= $title; ?></h2>
             <?php //$validation->listErrors(); //mengambil semua list error 
             ?>
-            <form action="/komik/save" method="POST">
+            <!-- enctype="multipart/form-data" = wajib ada jika upload file -->
+            <form action="/komik/save" method="POST" enctype="multipart/form-data">
                 <?= csrf_field(); //agar hanya di input di form ini saja 
                 ?>
                 <div class="mb-3">
@@ -30,8 +31,13 @@
                     <input type="text" class="form-control" name="penerbit">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Sampul</label>
-                    <input type="text" class="form-control" name="sampul">
+                    <!-- <label class="form-label">Sampul</label>
+                    <input type="file" class="form-control" name="sampul"> -->
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input <?= ($validation->hasError('sampul')) ? 'is-invalid' : ''; ?>" id="sampul" name="sampul">
+                        <?= $validation->getError('sampul'); //mengambil haserror dari judul di controller
+                        ?>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>

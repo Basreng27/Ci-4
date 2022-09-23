@@ -62,16 +62,36 @@ class Komik extends BaseController
                     'required' => '{field} komik harus diisi',
                     'is_unique' => '{field} sudah terdaftar'
                 ]
+            ],
+            'sampul' => [
+                'rules' => 'uploaded[sampul]|max_size[sampul,1024]|is_image[sampul]|mime_in[sampul,image/jpg,image/jpeg,image/png]', //bisa di lihat di dokumentasi codeignitor
+                'errors' => [
+                    'uploaded' => 'Sampul harus di upload',
+                    'max_size' => 'Gambar terlalu besar',
+                    'is_image' => 'Yang anda pilih bukan gambar',
+                    'mime_in' => 'Yang anda pilih bukan gambar',
+                ]
             ]
             // 'penulis' => 'required|'
         ])) {
             //mengambil pesan salah
-            $validation = \Config\Services::validation();
-            return redirect()->to('/komik/create')->withInput()->with('validation', $validation); //withInput() = mengirim semua data yang sebelumnya di input //with('validation', $validation) = mengirim data menggunakan redirect, validation = namanya, $validation = isinya
+            // $validation = \Config\Services::validation();
+            // return redirect()->to('/komik/create')->withInput()->with('validation', $validation); //withInput() = mengirim semua data yang sebelumnya di input //with('validation', $validation) = mengirim data menggunakan redirect, validation = namanya, $validation = isinya
+            return redirect()->to('/komik/create')->withInput(); //withInput() = mengirim semua data yang sebelumnya di input //with('validation', $validation) = mengirim data menggunakan redirect, validation = namanya, $validation = isinya
             //lalu masukan ke create
         }
         // $this->request->getVar('judul'); //untuk mengambil data 1
         // dd($this->request->getVar()); //mengambil request apapun get atau post
+
+        //ambil gambar
+        $fileSampul = $this->request->getFile('sampul'); //mengambil sampul
+        //generate random nama sampul
+        $namaSampul = $fileSampul->getRandomName();
+        //pindahkan ke folder
+        // $fileSampul->move('gambar'); //memindahkan sampul ke folder gambar yang ada di public //nama tidak random
+        $fileSampul->move('gambar', $namaSampul); //memindahkan sampul ke folder gambar yang ada di public //nama random
+        // //ambil nama file untuk dimasukan kedatabase
+        // $namaSampul = $fileSampul->getName();
 
         //slug adalah judul yang sudah di olah jika ada spasi maka di ganti _
         $slug = url_title($this->request->getVar('judul'), '_', true); //"url_title()" untuk membuat semua huruf kecil dan spasinya hilang
@@ -81,7 +101,7 @@ class Komik extends BaseController
             'slug' => $slug,
             'penulis' => $this->request->getVar('penulis'),
             'penerbit' => $this->request->getVar('penerbit'),
-            'sampul' => $this->request->getVar('sampul'),
+            'sampul' => $namaSampul
         ]);
 
         session()->setFlashdata('pesan', 'Data Berhasil disimpan'); //menampilkan notif yang hanya selewat
@@ -91,6 +111,12 @@ class Komik extends BaseController
 
     public function Delete($id)
     {
+        //cari gambar berdasarkan id
+        $komik = $this->komikModel->find($id);
+
+        //hapus gambar dalam folder
+        unlink('gambar/' . $komik['sampul']);
+
         $this->komikModel->delete($id); //menghapus data didatabase
         session()->setFlashdata('delete', 'Data Berhasil dihapus');
         return redirect()->to('/komik');
@@ -128,11 +154,34 @@ class Komik extends BaseController
                     'required' => '{field} komik harus diisi',
                     'is_unique' => '{field} sudah terdaftar'
                 ]
+            ],
+            'sampul' => [
+                'rules' => 'uploaded[sampul]|max_size[sampul,1024]|is_image[sampul]|mime_in[sampul,image/jpg,image/jpeg,image/png]', //bisa di lihat di dokumentasi codeignitor
+                'errors' => [
+                    'uploaded' => 'Sampul harus di upload',
+                    'max_size' => 'Gambar terlalu besar',
+                    'is_image' => 'Yang anda pilih bukan gambar',
+                    'mime_in' => 'Yang anda pilih bukan gambar',
+                ]
             ]
         ])) {
             //mengambil pesan salah
-            $validation = \Config\Services::validation();
-            return redirect()->to('/komik/edit/' . $this->request->getVar('slug'))->withInput()->with('validation', $validation);
+            // $validation = \Config\Services::validation();
+            // return redirect()->to('/komik/edit/' . $this->request->getVar('slug'))->withInput()->with('validation', $validation);
+            return redirect()->to('/komik/edit/' . $this->request->getVar('slug'))->withInput();
+        }
+
+        $fileSampul = $this->request->getFile('sampul');
+        //cek gambar berubah atau tidak
+        if ($fileSampul->getError() == 4) {
+            $namaSampul = $this->request->getVar('sampulLama');
+        } else {
+            //generate file random
+            $namaSampul = $fileSampul->getRandomName();
+            // pindahkan gambar
+            $fileSampul->move('gambar', $namaSampul);
+            //hapus file lama
+            unlink('gambar/' . $this->request->getVar('sampulLama'));
         }
 
         $slug = url_title($this->request->getVar('judul'), '_', true); //"url_title()" untuk membuat semua huruf kecil dan spasinya hilang
@@ -143,7 +192,7 @@ class Komik extends BaseController
             'slug' => $slug,
             'penulis' => $this->request->getVar('penulis'),
             'penerbit' => $this->request->getVar('penerbit'),
-            'sampul' => $this->request->getVar('sampul'),
+            'sampul' => $namaSampul
         ]);
 
         session()->setFlashdata('pesan', 'Data Berhasil disimpan');

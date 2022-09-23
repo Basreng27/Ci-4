@@ -14,10 +14,11 @@
                     Data Berhasil Disimpan
                 </div>
             <?php } ?>
-            <form action="/komik/update/<?= $komik['id']; ?>" method="POST">
+            <form action="/komik/update/<?= $komik['id']; ?>" method="POST" enctype="multipart/form-data">
                 <?= csrf_field(); //agar hanya di input di form ini saja 
                 ?>
                 <input type="hidden" name="slug" value="<?= $komik['slug']; ?>">
+                <input type="hidden" name="sampulLama" value="<?= $komik['sampul']; ?>">
                 <div class="mb-3">
                     <label class="form-label">Judul</label>
                     <!-- ifelse dalam satu baris mengecek ada atau tidaknya data -->
@@ -36,8 +37,14 @@
                     <input type="text" class="form-control" name="penerbit" value="<?= $komik['penerbit']; ?>">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Sampul</label>
-                    <input type="text" class="form-control" name="sampul" value="<?= $komik['sampul']; ?>">
+                    <!-- <label class="form-label">Sampul</label>
+                    <input type="text" class="form-control" name="sampul" value="<?php //$komik['sampul']; 
+                                                                                    ?>"> -->
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input <?= ($validation->hasError('sampul')) ? 'is-invalid' : ''; ?>" id="sampul" value="<?= $komik['sampul']; ?>" name="sampul">
+                        <?= $validation->getError('sampul'); //mengambil haserror dari judul di controller
+                        ?>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
